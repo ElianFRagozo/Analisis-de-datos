@@ -186,11 +186,9 @@ if uploaded_file is not None:
 
         plot_columns = st.multiselect("Selecciona columnas para graficar:", data.columns)
 
-    # Asegurarse de que se han seleccionado columnas antes de elegir el tipo de gráfico
     if len(plot_columns) > 0:
         plot_type = st.selectbox("Selecciona el tipo de gráfico:", ["Barra", "Línea", "Dispersión", "Área", "Pastel", "Barra Horizontal", "Radar"])
 
-        # Crear gráfico basado en el tipo seleccionado
         if plot_type == "Barra":
             fig = px.bar(data, x=plot_columns[0], y=plot_columns[1:])
         elif plot_type == "Línea":
@@ -200,12 +198,9 @@ if uploaded_file is not None:
         elif plot_type == "Área":
             fig = px.area(data, x=plot_columns[0], y=plot_columns[1:])
         elif plot_type == "Pastel":
-            # Si hay más de una columna seleccionada, sumamos los valores
             if len(plot_columns) > 1:
-                # Crear un DataFrame temporal con la suma de las columnas seleccionadas
-                pie_data = data[plot_columns].sum().reset_index()
-                pie_data.columns = ['categoría', 'valor']
-                fig = px.pie(pie_data, names='categoría', values='valor')
+                pie_data = data.groupby(plot_columns[0])[plot_columns[1:]].sum().reset_index()
+                fig = px.pie(pie_data, names=plot_columns[0], values=plot_columns[1])
             else:
                 fig = px.pie(data, names=data.index, values=plot_columns[0])
         elif plot_type == "Barra Horizontal":
@@ -233,8 +228,6 @@ if uploaded_file is not None:
             else:
                 st.warning("Por favor, selecciona al menos tres columnas para el gráfico Radar.")
                 fig = None
-        
-        # Mostrar el gráfico
         if fig is not None:
             st.plotly_chart(fig)
     else:
