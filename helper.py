@@ -79,7 +79,7 @@ def describe(data):
 def outliers(data, num_category_outliers):
     plt.figure(figsize=(6,2))
     flierprops = dict(marker='o', markerfacecolor='purple', markersize=6,
-                    linestyle='none', markeredgecolor='black')
+                      linestyle='none', markeredgecolor='black')
     
     path_list = []
     for i in range(len(num_category_outliers)):
@@ -89,6 +89,10 @@ def outliers(data, num_category_outliers):
         plt.title("Comprobando valores atípicos para la columna {}".format(column))
         plot = sns.boxplot(x=column, flierprops=flierprops, data=data)
         fig = plot.get_figure()
+
+        # Crear el directorio 'temp' si no existe
+        if not os.path.exists('temp'):
+            os.makedirs('temp')
 
         path = 'temp/pic{}.png'.format(i)
         fig.savefig(path)
